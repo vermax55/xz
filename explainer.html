@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Как работает бот</title>
+<style>
+  :root {
+    --bg: #14171c;
+    --panel: #1b1f26;
+    --text: #e7e9ee;
+    --muted: #9aa3b2;
+    --accent: #6f8cff;
+    --rule: #2a2f3a;
+    --mono-bg: #101317;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    line-height: 1.65;
+  }
+
+  body {
+    display: flex;
+    justify-content: center;
+    padding: 64px 24px 96px;
+  }
+
+  main {
+    max-width: 720px;
+    width: 100%;
+  }
+
+  header {
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 12px;
+    font-weight: 600;
+  }
+
+  h1 {
+    font-size: 34px;
+    margin: 0 0 14px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .lead {
+    color: var(--muted);
+    font-size: 17px;
+    margin: 0;
+  }
+
+  section {
+    margin-bottom: 40px;
+  }
+
+  h2 {
+    font-size: 21px;
+    margin: 0 0 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+
+  h2 .num {
+    color: var(--accent);
+    font-size: 14px;
+    font-weight: 700;
+    font-family: "SF Mono", Consolas, monospace;
+  }
+
+  p {
+    margin: 0 0 14px;
+    font-size: 16px;
+    color: var(--text);
+  }
+
+  p.muted {
+    color: var(--muted);
+    font-size: 15px;
+  }
+
+  code {
+    background: var(--mono-bg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 2px 6px;
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 14px;
+    color: var(--accent);
+  }
+
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 20px 22px;
+    margin-top: 6px;
+  }
+
+  .card p:last-child {
+    margin-bottom: 0;
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 24px;
+    margin-top: 56px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 28px; }
+    body { padding: 40px 18px 72px; }
+  }
+</style>
+</head>
+<body>
+<main>
+
+  <header>
+    <p class="eyebrow">Документация</p>
+    <h1>Как работает бот</h1>
+    <p class="lead">Простое объяснение того, что делает бот, как он подключается и почему иногда что-то идёт не так.</p>
+  </header>
+
+  <section>
+    <h2><span class="num">01</span>Что делает бот</h2>
+    <p>Бот связывает игровой сервер и Discord-сервер в одно пространство общения. Сообщения, написанные игроками в чате внутри игры, автоматически попадают в выбранный текстовый канал Discord — и наоборот: то, что пишут в Discord, появляется в игровом чате.</p>
+    <p>Кроме пересылки сообщений, бот умеет показывать статусы игроков, события захода и выхода с сервера, а также подключаться к дополнительным интеграциям — например, к голосовому модулю или системе ролей.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span>Как происходит подключение</h2>
+    <p>Когда сервер запускается, бот устанавливает соединение с Discord через защищённый канал связи, который называется Gateway. Это постоянное соединение, через которое Discord присылает боту события в реальном времени: новое сообщение, изменение в канале, статус участника и так далее.</p>
+    <p>Чтобы подключиться, бот должен сообщить Discord, какие именно события он хочет получать. Этот список запрашиваемых событий называется <code>intents</code> — права доступа. Без указания нужных intents бот просто не получит часть данных, даже если технически он онлайн.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span>Привилегированные права доступа</h2>
+    <p>Часть возможностей Discord считает чувствительными к приватности — например, доступ к содержимому сообщений или к полному списку участников сервера. Такие права называются привилегированными intents, и по умолчанию они отключены.</p>
+    <div class="card">
+      <p>Если бот пытается получать события, для которых привилегированный доступ не включён в настройках приложения, Discord обрывает соединение с кодом ошибки <code>4014 — Disallowed intent(s)</code>. Это значит: бот запросил доступ, которого у него формально нет, и Discord не позволяет установить соединение до тех пор, пока нужный переключатель не будет включён вручную.</p>
+    </div>
+    <p class="muted">Важная деталь: то, что бот выглядит «онлайн» и отвечает на команды, не означает, что все его модули подключены успешно — у бота может быть несколько независимых соединений, и одно из них (например, отвечающее за чат-мост) может обрываться отдельно от основного.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span>Почему чат может пропадать</h2>
+    <p>Если соединение, отвечающее за пересылку сообщений между игрой и Discord, постоянно рвётся и переподключается, сообщения перестают идти в обе стороны — даже если сам бот числится в сети. Внешне это выглядит так, будто чат «исчез», хотя на самом деле просто не работает именно тот канал связи, который нужен.</p>
+    <p>Чаще всего причина — отсутствие нужных прав доступа в настройках приложения бота, рассинхронизация токена после изменения настроек, либо ограничение, которое Discord накладывает на ботов, подключённых к большому числу серверов.</p>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span>Что в итоге важно понимать</h2>
+    <p>Бот — это не один монолитный процесс, а набор отдельных соединений и модулей, каждый со своими правами доступа. Стабильная работа чат-моста зависит не только от того, что бот запущен, но и от того, что все нужные права выданы заранее и не были случайно отключены.</p>
+  </section>
+
+  <footer>
+    <p style="margin:0 0 10px;">Этот текст — справочное описание принципа работы, а не техническая инструкция по настройке.</p>
+    <a href="privacy.html" style="color: var(--accent); text-decoration: none;">Политика конфиденциальности →</a>
+  </footer>
+
+</main>
+</body>
+</html>
